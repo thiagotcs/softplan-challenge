@@ -11,6 +11,7 @@ const GET_COUNTRIES = gql`
   query {
     Country {
       name
+      alpha2Code
       capital
       flag {
         svgFile
@@ -32,7 +33,7 @@ export default () => {
         {data?.Country.map((country) => (
           <Col xs={{ span: 12 }} sm={{ span: 12 }} lg={{ span: 6 }} xl={{ span: 6 }}>
             <Card
-              onClick={() => history.push(`/details/${country.name}`)}
+              onClick={() => history.push(`/details/${country.alpha2Code}`)}
               countryName={country.name}
               capital={country.capital}
               countryFlag={country.flag.svgFile}

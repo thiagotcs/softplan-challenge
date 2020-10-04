@@ -11,7 +11,7 @@ const CountryCard = ({ countryName, capital, countryFlag, onClick }) => (
   <Card
     hoverable
     className="card"
-    cover={<img alt="country flag" className="flag" src={countryFlag} />}
+    cover={<img alt="country flag" src={countryFlag} />}
     onClick={onClick}
   >
     <Meta title={countryName} description={capital} />

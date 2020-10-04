@@ -2,13 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Container, Row, Col } from 'react-awesome-styled-grid';
 import { gql, useQuery } from '@apollo/client';
-import { Button } from 'antd';
+import { Button, Input } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 
 import { Card } from '../../components';
 
+const { Search } = Input;
+
 const GET_COUNTRIES = gql`
-  query Country($first: Int, $offset: Int) {
-    Country(first: $first, offset: $offset) {
+  query Country($first: Int, $offset: Int, $name: String) {
+    Country(first: $first, offset: $offset, filter: { name_contains: $name }) {
       name
       alpha2Code
       capital
@@ -20,7 +23,7 @@ const GET_COUNTRIES = gql`
 `;
 
 export default () => {
-  const [filters, setFilters] = useState({ first: 8, offset: 0 });
+  const [filters, setFilters] = useState({ first: 8, offset: 0, name: '' });
   const { data, loading, error, fetchMore } = useQuery(GET_COUNTRIES, {
     variables: { ...filters },
   });
@@ -28,17 +31,17 @@ export default () => {
 
   useEffect(() => {
     fetchMore({
-      variables: {
-        ...filters,
-      },
+      variables: filters,
       updateQuery: (prev, { fetchMoreResult }) => {
         if (!fetchMoreResult) return prev;
         return { Country: [...fetchMoreResult.Country] };
       },
     });
-  }, [filters]);
+  }, [filters, fetchMore]);
 
-  const onLoadMore = () => setFilters({ ...filters, offset: filters.offset + 1 });
+  const onLoadMore = () => setFilters({ ...filters, offset: filters.offset + 1, name: '' });
+
+  const searchCountryByName = (name) => setFilters({ first: 8, offset: 0, name });
 
   if (loading) return <h1>loading...</h1>;
   if (error) return <h1>error..</h1>;
@@ -46,6 +49,17 @@ export default () => {
   return (
     <Container fluid>
       <Container>
+        <Row justify="center" align="center">
+          <Col xs={4} sm={4} lg={10} xl={10}>
+            <Search
+              placeholder="Encontre um país pelo seu nome..."
+              enterButton={<SearchOutlined />}
+              style={{ margin: '40px auto ' }}
+              size="large"
+              onSearch={(value) => searchCountryByName(value)}
+            />
+          </Col>
+        </Row>
         <Row justify="center" align="center">
           {data?.Country.map((country) => (
             <Col xs={12} sm={12} lg={2.5} xl={6}>

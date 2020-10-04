@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
@@ -6,7 +7,9 @@ import './global-styles.css';
 import App from './routes';
 
 const client = new ApolloClient({
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    dataIdFromObject: (object) => object._id,
+  }),
   uri: 'https://countries-274616.ew.r.appspot.com',
   resolvers: {},
 });

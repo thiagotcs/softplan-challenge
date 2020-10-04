@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Container, Row, Col } from 'react-awesome-styled-grid';
 import { gql, useQuery } from '@apollo/client';
@@ -12,6 +12,7 @@ const { Search } = Input;
 const GET_COUNTRIES = gql`
   query Country($first: Int, $offset: Int, $name: String) {
     Country(first: $first, offset: $offset, filter: { name_contains: $name }) {
+      _id
       name
       alpha2Code
       capital
@@ -24,20 +25,10 @@ const GET_COUNTRIES = gql`
 
 export default () => {
   const [filters, setFilters] = useState({ first: 8, offset: 0, name: '' });
-  const { data, loading, error, fetchMore } = useQuery(GET_COUNTRIES, {
+  const { data, loading, error } = useQuery(GET_COUNTRIES, {
     variables: { ...filters },
   });
   const history = useHistory();
-
-  useEffect(() => {
-    fetchMore({
-      variables: filters,
-      updateQuery: (prev, { fetchMoreResult }) => {
-        if (!fetchMoreResult) return prev;
-        return { Country: [...fetchMoreResult.Country] };
-      },
-    });
-  }, [filters, fetchMore]);
 
   const onLoadMore = () => setFilters({ ...filters, offset: filters.offset + 1, name: '' });
 
@@ -60,7 +51,7 @@ export default () => {
             />
           </Col>
         </Row>
-        <Row justify="center" align="center">
+        <Row justify="center" align="top">
           {data?.Country.map((country) => (
             <Col xs={12} sm={12} lg={2.5} xl={6}>
               <Card

@@ -53,7 +53,7 @@ export default () => {
         </Row>
         <Row justify="center" align="top">
           {data?.Country.map((country) => (
-            <Col xs={12} sm={12} lg={2.5} xl={6}>
+            <Col xs={2.5} sm={2.5} lg={2.5} xl={6}>
               <Card
                 onClick={() => history.push(`/details/${country.alpha2Code}`)}
                 countryName={country.name}
